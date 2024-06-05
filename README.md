@@ -3,8 +3,6 @@ Twitch chat Text-to-Speech with extremely high quality voices and a super easy 2
 
 Can be used on all streaming platforms, including mobile apps. Disconnect-resistant. 
 
-Enjoy our patented 2-Second™ set-up process (just change the username parameter in the URL) :). 
-
 This is it:
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
