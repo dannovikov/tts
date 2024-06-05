@@ -4,7 +4,7 @@ Twitch chat TTS with extremely high quality voices, a super easy, 2-Second™ se
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
 Add this page as a browser source in your streaming platform to hear your Twitch chat.
----
+
 ## Setup options:
 ### 1) Setup as an OBS Browser source
 
