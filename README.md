@@ -1,13 +1,11 @@
 ## Twitch Chat Text-to-Speech for OBS / Streamlabs
-Twitch chat Text-to-Speech with extremely high quality voices and a super easy 2-Second™ set-up process.
+Twitch chat Text-to-Speech with extremely high quality voices, and a super easy, 2-Second™ set-up process.
 
-Can be used on all streaming platforms, including mobile apps. Disconnect-resistant. 
-
-This is it:
+This works on all streaming platforms, including mobile apps. Disconnect-resistant.
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
-The webpage is blank. When you vist it, it connects to the Twitch channel in the URL's "username" parameter, and plays audio of all incoming chats. 
+The webpage is blank, but when you vist it, it connects to the Twitch channel in the URL's "username" parameter, and plays audio of all incoming chats. 
 
 ### Setup as an OBS Browser source
 
@@ -20,7 +18,7 @@ In OBS, add a new source to your scene of type `Browser`. In the `URL` field, ty
 *Note* this source needs to be in every scene where you want TTS.
 
 ### Setup in your internet browser
-An alternative to using OBS Browser source functionality, you can also just visit the URL in your internet browser like Chrome, Safari, etc. You may need to click a few times on the page, for the audio to start playing. But either way, the audio will start to play as the chats start coming in.
+If you don't want to use OBS Browser source, an alternative is to visit the URL in your internet browser like Chrome, Safari, etc. You may need to click a few times on the page, for the audio to start playing. But either way, the audio will start to play as the chats start coming in.
 
 
 ## Run the server yourself
