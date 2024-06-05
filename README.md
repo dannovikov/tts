@@ -1,5 +1,5 @@
 ### Twitch Chat Text-to-Speech
-Twitch chat Text-to-Speech with extremely high quality voices, and a super easy, 2-Second™ set-up process. Works on all streaming platforms, including mobile apps. Disconnect-resistant.
+Twitch chat TTS with extremely high quality voices, and a super easy, 2-Second™ set-up process. It works on all streaming platforms, including mobile apps. Disconnect-resistant.
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
