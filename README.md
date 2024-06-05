@@ -3,7 +3,7 @@ Twitch chat TTS with extremely high quality voices, and a super easy, 2-Secondâ„
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
-The webpage is blank, but when you vist it, it connects to the Twitch channel in the URL's "username" parameter, and plays audio of all incoming chats. 
+The webpage is blank, but when you visit it, it connects to the Twitch channel in the URL's "username" parameter, and plays audio of all incoming chats. 
 
 ### Setup as an OBS Browser source
 
