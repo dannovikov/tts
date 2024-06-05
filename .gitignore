@@ -1,0 +1,6 @@
+backups_i_made_before_git/
+node_modules/
+*.mp3
+*.json
+!package.json
+openai_api_key

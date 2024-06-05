@@ -1,0 +1,14 @@
+announce to all tts listeners
+global voice change
+listen to bit redeems
+max char limit
+emote detection
+tts timeout
+help
+add moderators and vips to the superlist
+change keywords
+admin panel
+on redeem, enable tts
+enable the announce users
+save voices
+tts symbol
