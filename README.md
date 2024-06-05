@@ -1,5 +1,5 @@
-## Twitch Text-to-Speech for OBS / Streamlabs
-Instant text to speech for your twitch channel with extremely high quality voices. Can be used as an OBS (or Streamlabs) Browser source. Mobile streaming apps supported. Disconnect-resistant. Find out more in the features section below. 
+## Twitch Chat Text-to-Speech for OBS / Streamlabs
+Twitch chat Text-to-Speech with extremely high quality voices. Can be used on all streaming platforms, including mobile apps. Disconnect-resistant. Enjoy our patented 2-Second™ set-up process :). See features section for all the cool stuff going on under the hood. 
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
