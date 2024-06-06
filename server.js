@@ -253,6 +253,29 @@ async function TTS(message, tags, streamer, channel) {
     }
 }
 
+async function speak(message, streamer, voice = 1) {
+    if (streamer.startsWith("#")) streamer = streamer.slice(1);
+    const timestamp = getDate().toISOString().replace(/:/g, "-");
+    const filePath = path.join(__dirname, "public", `${streamer}_${timestamp}.mp3`);
+
+    const response = await callWhisperAPI(message, voice);
+    const buffer = Buffer.from(await response.arrayBuffer());
+
+    fs.writeFile(filePath, buffer, (err) => {
+        if (err) {
+            console.error("Failed to save file:", err);
+            return;
+        }
+        // console.log(`Saved audio to ${filePath}`);
+        if (listeners[streamer]) {
+            listeners[streamer].forEach((listener) => {
+                console.log(`Sending audio to ${streamer}`);
+                listener.send(JSON.stringify({ audioUrl: `/${streamer}_${timestamp}.mp3` }));
+            });
+        }
+    });
+}
+
 function satisfiesChannelConfig(channel, tags, message, is_cheer = false) {
     console.log("processing message", message);
     const channel_config = channel_configs[channel];
@@ -286,29 +309,6 @@ function satisfiesChannelConfig(channel, tags, message, is_cheer = false) {
     }
 
     return true;
-}
-
-async function speak(message, streamer, voice = 1) {
-    if (streamer.startsWith("#")) streamer = streamer.slice(1);
-    const timestamp = getDate().toISOString().replace(/:/g, "-");
-    const filePath = path.join(__dirname, "public", `${streamer}_${timestamp}.mp3`);
-
-    const response = await callWhisperAPI(message, voice);
-    const buffer = Buffer.from(await response.arrayBuffer());
-
-    fs.writeFile(filePath, buffer, (err) => {
-        if (err) {
-            console.error("Failed to save file:", err);
-            return;
-        }
-        // console.log(`Saved audio to ${filePath}`);
-        if (listeners[streamer]) {
-            listeners[streamer].forEach((listener) => {
-                console.log(`Sending audio to ${streamer}`);
-                listener.send(JSON.stringify({ audioUrl: `/${streamer}_${timestamp}.mp3` }));
-            });
-        }
-    });
 }
 
 async function callWhisperAPI(message, voice = 1) {
