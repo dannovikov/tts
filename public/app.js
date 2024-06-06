@@ -17,7 +17,7 @@ function setupPersistentConnection(username) {
             return;
         }
 
-        ws = new WebSocket(`ws://${location.host}/ws?streamer=${username}`);
+        ws = new WebSocket(`wss://${location.host}/ws?streamer=${username}`);
 
         ws.onopen = ws.onmessage = ws.onerror = function(event) {
             if (event.type === 'message') {
