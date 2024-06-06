@@ -1,9 +1,4 @@
 /* 
-    
-Easy Twitch TTS with OpenAI API
-
-    Reads messages from a Twitch chat and converts them to speech using the OpenAI API.
-
     User visits the URL:
         https://tts.dantheory.com/?username=TwitchUsername
     and starts hearing the chat of the streamer in the username parameter.
@@ -12,11 +7,14 @@ Easy Twitch TTS with OpenAI API
 
     Terminology in this program:
         - twitch_connections: 
-            - Chat-fetching Twitch clients that connect to the Twitch chat of a streamer and listen for messages
+            - Chat-fetching Twitch clients 
+            - connect to the Twitch chat of a streamer and listen for messages
         - listeners: 
-            - Clients of this server (OBS clients, Browsers,) to whom we send TTS audio for their chosen streamer
+            - Clients of this server (OBS clients, Browsers,) 
+            - we send the streamer's TTS audio to these clients
         - channel_configs:
-            - A dictionary that stores the TTS settings of each channel, including bit price, character limit, whitelist, and superlist.
+            - A dictionary that stores the TTS settings of each channel
+            - including bit price, character limit, whitelist, and superlist.
 */
 
 const express = require("express");
