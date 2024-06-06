@@ -452,11 +452,6 @@ function deleteOldFile(file, streamer, timestamp) {
     }
 }
 
-function getStreamerNameFromURL(request) {
-    const streamer = new URL(request.url, `http://${request.headers.host}`).searchParams.get("streamer").toLowerCase();
-    if (!listeners[streamer]) listeners[streamer] = [];
-    return streamer;
-}
 
 function pingListeners() {
     wss.clients.forEach(function each(ws) {
