@@ -19,6 +19,7 @@ If you want to run the server yourself,
 - install the dependancies with `npm install`,
 - create a file `openai_api_key` in the top level directory, and
 - run the server with `node server.js`
+- connect to `localhost:3000/?username=YourTwitchUsername`
 
 There are three main files to concern yourself with, `server.js`, `public/app.js`, and `public/index.html`.
 
