@@ -1,5 +1,5 @@
 # Twitch Chat Text-to-Speech
-Twitch chat TTS with a super easy, 2-Second™ set-up process. State-of-the-art voices. Works on all streaming platforms, including mobile apps with spotty connections. 
+Twitch chat TTS with a super easy 2-Second(™) set-up process. 
 
 ```https://tts.dantheory.com/?username=YourTwitchUsername```
 
