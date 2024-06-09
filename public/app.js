@@ -3,6 +3,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const username = urlParams.get('username');
     if (username) {
+        console.log('Streamer username:', username);
         setupPersistentConnection(username);
     }
 });
@@ -17,7 +18,7 @@ function setupPersistentConnection(username) {
             return;
         }
 
-        ws = new WebSocket(`wss://${location.host}/ws?streamer=${username}`);
+        ws = new WebSocket(`ws://${location.host}/ws?streamer=${username}`);
 
         ws.onopen = ws.onmessage = ws.onerror = function(event) {
             if (event.type === 'message') {
@@ -34,12 +35,18 @@ function setupPersistentConnection(username) {
 
     function manageConnection(visibility) {
         if (visibility) {
+            console.log('Connecting to Twitch...');
             connectToTwitch();
             if (!reconnectInterval) reconnectInterval = setInterval(connectToTwitch, 10000);
         } else {
+            console.log('Disconnecting from Twitch...');
             if (reconnectInterval) {
                 clearInterval(reconnectInterval);
                 reconnectInterval = null;
+            }
+            if (ws) {
+                ws.close();
+                ws = null;
             }
         }
     }

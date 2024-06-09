@@ -12,3 +12,4 @@ on redeem, enable tts
 enable the announce users
 save voices
 tts symbol
+stop all tts

@@ -54,8 +54,10 @@ if (!channel_configs["default"]) {
         use_whitelist: false,
         superlist: [],
         tts_symbol: "",
+        blacklist: [],
     };
 }
+
 
 let interval = setInterval(function ping() {
     pingListeners();
@@ -211,6 +213,32 @@ function parseCommands(channel, tags, message, is_cheer = false) {
         tokens_processed = 1;
     }
 
+    //!blacklist <username>
+    else if (message.startsWith("!blacklist")) {
+        if (parsed.length >= 2) {
+            const target_user = parsed[1].trim().replace("@", "").toLowerCase();
+            const blacklist = channel_configs[channel]["blacklist"];
+            if (blacklist.includes(target_user)) {
+                for (let i = 0; i < blacklist.length; i++) {
+                    if (blacklist[i] === target_user) {
+                        blacklist.splice(i, 1);
+                        speak(`Removed ${target_user} from the blacklist in ${channel}`, channel);
+                        break;
+                    }
+                }
+            } else {
+                blacklist.push(target_user);
+                speak(`Blacklisted ${target_user} in ${channel}`, channel);
+            }
+            tokens_processed = 2;
+        }
+        else {
+            speak(`Blacklist for ${channel}: ${channel_configs[channel]["blacklist"].join(", ")}`, channel);
+            tokens_processed = 1;
+        }
+    }
+
+
     // Admin commands
     if (channel === "#loldayzo" && tags.username === "loldayzo") {
         if (message.startsWith("!announce")) {
@@ -234,7 +262,8 @@ function parseCommands(channel, tags, message, is_cheer = false) {
         message = parsed.slice(tokens_processed).join(" ");
         if (message.startsWith("!")) parseCommands(channel, tags, message);
     }
-    return message;
+    if (!message.startsWith("!")) 
+        return message;
 }
 
 async function TTS(message, tags, streamer, channel) {
@@ -289,6 +318,11 @@ function satisfiesChannelConfig(channel, tags, message, is_cheer = false) {
     if (channel_config["superlist"].includes(chatter)) {
         console.log(`${channel}: Allowing message from ${chatter} for: superlist`);
         return true;
+    }
+
+    if (channel_config["blacklist"].includes(chatter)) {
+        console.log(`${chatter} is blacklisted in ${channel}`);
+        return false;
     }
 
     if (channel_config["tts_bit_price"] > 0) {
@@ -389,7 +423,39 @@ function readChannelConfigsFromFile() {
     const filePath = path.join(__dirname, "user_configurations", "channel_configs.json");
     if (fs.existsSync(filePath)) {
         const data = fs.readFileSync(filePath);
-        return JSON.parse(data);
+        // return JSON.parse(data);
+        let parsed = JSON.parse(data);
+        for (const channel in parsed) {
+            if (parsed[channel]["tts_bit_price"] === undefined) {
+                console.log("Adding field for", channel, "tts_bit_price")
+                parsed[channel]["tts_bit_price"] = 0;
+            }
+            if (parsed[channel]["character_limit"] === undefined) {
+                console.log("Adding field", channel, "character_limit")
+                parsed[channel]["character_limit"] = 500;
+            }
+            if (parsed[channel]["whitelist"] === undefined) {
+                console.log("Adding field for", channel, "whitelist")
+                parsed[channel]["whitelist"] = [];
+            }
+            if (parsed[channel]["use_whitelist"] === undefined) {
+                console.log("Adding field for", channel, "use_whitelist")
+                parsed[channel]["use_whitelist"] = false;
+            }
+            if (parsed[channel]["superlist"] === undefined) {
+                console.log("Adding field for", channel, "superlist")
+                parsed[channel]["superlist"] = [];
+            }
+            if (!parsed[channel]["blacklist"]) {
+                console.log("Adding field for", channel, "blacklist")
+                parsed[channel]["blacklist"] = [];
+            }
+            if (parsed[channel]["tts_symbol"] === undefined) {
+                console.log("Adding field for", channel, "tts_symbol")
+                parsed[channel]["tts_symbol"] = "";
+            }
+        }
+        return parsed;
     } else {
         console.log("Creating a new config file");
         fs.writeFileSync(filePath, JSON.stringify({}));
@@ -410,7 +476,6 @@ function readChatterDesiredVoicesFromFile() {
 }
 
 function getStatisticsFilePath() {
-    ``;
     const today = getDate();
     const date = today.toISOString().split("T")[0];
     const file = `statistics_${date}.json`;
