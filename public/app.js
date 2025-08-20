@@ -12,6 +12,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function setupPersistentConnection(username) {
     let ws;
     let reconnectInterval;
+    let pingInterval;
 
     function connectToTwitch() {
         if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
@@ -20,17 +21,46 @@ function setupPersistentConnection(username) {
 
         ws = new WebSocket(`ws://${location.host}/ws?streamer=${username}`);
 
-        ws.onopen = ws.onmessage = ws.onerror = function(event) {
-            if (event.type === 'message') {
-                const data = JSON.parse(event.data);
-                if (data.audioUrl) {
-                    playAudio(data.audioUrl);
-                    console.log('Received audio:', data.audioUrl);
-                }
-            } else if (event.type === 'error') {
-                console.error('WebSocket error:', event);
+        ws.onopen = function() {
+            startPing();
+        };
+
+        ws.onmessage = function(event) {
+            if (event.data === 'pong') return;
+            const data = JSON.parse(event.data);
+            if (data.audioUrl) {
+                playAudio(data.audioUrl);
+                console.log('Received audio:', data.audioUrl);
             }
         };
+
+        ws.onerror = function(event) {
+            console.error('WebSocket error:', event);
+        };
+
+        ws.onclose = function() {
+            console.log('WebSocket closed. Reconnecting...');
+            stopPing();
+            ws = null;
+            setTimeout(connectToTwitch, 1000);
+        };
+    }
+
+    function startPing() {
+        if (!pingInterval) {
+            pingInterval = setInterval(() => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send('ping');
+                }
+            }, 30000);
+        }
+    }
+
+    function stopPing() {
+        if (pingInterval) {
+            clearInterval(pingInterval);
+            pingInterval = null;
+        }
     }
 
     function manageConnection(visibility) {
@@ -44,6 +74,7 @@ function setupPersistentConnection(username) {
                 clearInterval(reconnectInterval);
                 reconnectInterval = null;
             }
+            stopPing();
             if (ws) {
                 ws.close();
                 ws = null;
