@@ -55,6 +55,7 @@ if (!channel_configs["default"]) {
         letlist: [],
         tts_symbol: "",
         banlist: [],
+        tts_enabled: true,
     };
 }
 
@@ -69,6 +70,12 @@ let interval = setInterval(function ping() {
 wss.on("connection", function (ws, request) {
     const streamer = getStreamerNameFromURL(request);
     listeners[streamer].push(ws);
+
+    ws.on("message", (msg) => {
+        if (msg.toString() === "ping") {
+            ws.send("pong");
+        }
+    });
 
     if (!twitch_connections[streamer]) {
         const client = connect(streamer);
@@ -139,15 +146,17 @@ function parseCommands(channel, tags, message, is_cheer = false) {
 
     // !tts help
     if (message.startsWith("!tts help")) {
-        speak("There are 8 tts commands in total: \n\
-             1... T-T-S voice 1 through 6, to change your voice...\n\
-             2... T-T-S bits 100, to set the bits price for T-T-S messages to 100 bits...\n\
-             3... T-T-S emotes on, or T-T-S emotes off, for controlling emote reading...\n\
-             4... T-T-S ban...\n\
-             5... T-T-S unban...\n\
-             6... T-T-S banlist...\n\
-             7... T-T-S let username...to let a user TTS no matter what\n\
-             and 8... T-T-S letlist... to see who is on your letlist (people who you have let)\n", channel);
+        speak("There are 10 tts commands in total: \n\
+             1... T-T-S on or T-T-S off, to enable or disable T-T-S\n\
+             2... T-T-S voice 1 through 6, to change your voice...\n\
+             3... T-T-S bits 100, to set the bits price for T-T-S messages to 100 bits...\n\
+             4... T-T-S emotes on, or T-T-S emotes off, for controlling emote reading...\n\
+             5... T-T-S ban...\n\
+             6... T-T-S unban...\n\
+             7... T-T-S banlist...\n\
+             8... T-T-S let username...to let a user TTS no matter what\n\
+             9... T-T-S letlist... to see who is on your letlist (people who you have let)\n\
+             and 10... T-T-S charlimit N, to set the character limit for messages\n", channel);
         tokens_processed = 2;
     }
 
@@ -184,6 +193,17 @@ function parseCommands(channel, tags, message, is_cheer = false) {
                 tokens_processed = 2;
             }
         }
+    }
+
+    // !tts on/off
+    else if (message.startsWith("!tts on")) {
+        channel_config["tts_enabled"] = true;
+        speak(`TTS enabled for ${channel}`, channel);
+        tokens_processed = 2;
+    }
+    else if (message.startsWith("!tts off")) {
+        channel_config["tts_enabled"] = false;
+        tokens_processed = 2;
     }
 
     // !tts let <username>
@@ -325,6 +345,7 @@ function parseCommands(channel, tags, message, is_cheer = false) {
 
 async function TTS(message, tags, streamer, channel) {
     if (!message) return;
+    if (channel_configs[channel]["tts_enabled"] === false) return;
     try {
         await speak(message, streamer, chatter_desired_voices[tags.username]);
         recordStatistics({
@@ -342,6 +363,8 @@ async function TTS(message, tags, streamer, channel) {
 
 async function speak(message, streamer, voice = 1) {
     if (!message) return;
+    const channelKey = streamer.startsWith("#") ? streamer : `#${streamer}`;
+    if (channel_configs[channelKey] && channel_configs[channelKey]["tts_enabled"] === false) return;
     if (streamer.startsWith("#")) streamer = streamer.slice(1);
     const timestamp = getDate().toISOString().replace(/:/g, "-");
     const filePath = path.join(__dirname, "public", `${streamer}_${timestamp}.mp3`);
@@ -555,6 +578,10 @@ function readChannelConfigsFromFile() {
             if (parsed[channel]["tts_symbol"] === undefined) {
                 console.log("Adding field for", channel, "tts_symbol")
                 parsed[channel]["tts_symbol"] = "";
+            }
+            if (parsed[channel]["tts_enabled"] === undefined) {
+                console.log("Adding field for", channel, "tts_enabled")
+                parsed[channel]["tts_enabled"] = true;
             }
             //read_emotes
             if (parsed[channel]["read_emotes"] === undefined) {
