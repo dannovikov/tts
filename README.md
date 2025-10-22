@@ -20,7 +20,7 @@ Use chat commands to control the service:
 
 - `!tts on` – enable text-to-speech.
 - `!tts off` – disable text-to-speech (no messages are sent to OpenAI).
-- `!tts voice <1-6>` – change your voice.
+- `!tts voice <1-9>` – change your voice (1=alloy, 2=echo, 3=fable, 4=onyx, 5=nova, 6=shimmer, 7=ash, 8=coral, 9=sage).
 - `!ttsbits <n>` – set the bit price for TTS messages.
 - `!tts emotes on` / `!tts emotes off` – toggle reading emotes.
 - `!tts ban <username>` – ban a user from TTS.
@@ -39,5 +39,13 @@ If you want to run the server yourself,
 - connect to `localhost:3000/?username=YourTwitchUsername`
 
 There are three main files to concern yourself with, `server.js`, `public/app.js`, and `public/index.html`.
+
+### Customizing Voices
+The available voices are configured in `user_configurations/voices.json`. You can:
+- Reorder voices by changing their numbers
+- Add new voices as OpenAI releases them
+- Remove voices you don't want to offer
+
+The server will fall back to a default list if `voices.json` is missing or invalid.
 
 

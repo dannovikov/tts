@@ -36,15 +36,7 @@ const statistics_file = getStatisticsFilePath();
 const statistics = readStatisticsFromFile();
 const chatter_desired_voices = readChatterDesiredVoicesFromFile();
 const channel_configs = readChannelConfigsFromFile();
-
-const voice_map = {
-    1: "alloy",
-    2: "echo",
-    3: "fable",
-    4: "onyx",
-    5: "nova",
-    6: "shimmer",
-};
+const voice_map = readVoicesFromFile();
 
 if (!channel_configs["default"]) {
     channel_configs["default"] = {
@@ -148,7 +140,7 @@ function parseCommands(channel, tags, message, is_cheer = false) {
     if (message.startsWith("!tts help")) {
         speak("There are 10 tts commands in total: \n\
              1... T-T-S on or T-T-S off, to enable or disable T-T-S\n\
-             2... T-T-S voice 1 through 6, to change your voice...\n\
+             2... T-T-S voice 1 through 9, to change your voice...\n\
              3... T-T-S bits 100, to set the bits price for T-T-S messages to 100 bits...\n\
              4... T-T-S emotes on, or T-T-S emotes off, for controlling emote reading...\n\
              5... T-T-S ban...\n\
@@ -352,7 +344,7 @@ async function TTS(message, tags, streamer, channel) {
             streamer: streamer,
             voice: chatter_desired_voices[tags.username],
             channel: channel,
-            username: tags.username,
+            chatter: tags.username,
             message: message,
         });
         cleanUpAudioFiles(streamer, getDate().toISOString().replace(/:/g, "-"));
@@ -540,8 +532,8 @@ function readStatisticsFromFile() {
     } else {
         console.log(`Creating a new statistics file for ${getDate()}`);
         fs.writeFileSync(statistics_file, JSON.stringify({}));
+        return {};
     }
-    return {};
 }
 
 function readChannelConfigsFromFile() {
@@ -607,6 +599,46 @@ function readChatterDesiredVoicesFromFile() {
         fs.writeFileSync(filePath, JSON.stringify({}));
     }
     return {};
+}
+
+function readVoicesFromFile() {
+    const filePath = path.join(__dirname, "user_configurations", "voices.json");
+    const defaultVoiceMap = {
+        1: "alloy",
+        2: "echo",
+        3: "fable",
+        4: "onyx",
+        5: "nova",
+        6: "shimmer",
+        7: "ash",
+        8: "coral",
+        9: "sage",
+    };
+    
+    if (fs.existsSync(filePath)) {
+        try {
+            const data = fs.readFileSync(filePath);
+            const voicesConfig = JSON.parse(data);
+            const voiceMap = {};
+            
+            // Convert config format to simple number -> name mapping
+            for (const key in voicesConfig) {
+                const voiceNum = parseInt(key);
+                if (voicesConfig[key].name) {
+                    voiceMap[voiceNum] = voicesConfig[key].name;
+                }
+            }
+            
+            console.log(`Loaded ${Object.keys(voiceMap).length} voices from voices.json`);
+            return voiceMap;
+        } catch (error) {
+            console.error("Failed to parse voices.json, using defaults:", error);
+            return defaultVoiceMap;
+        }
+    } else {
+        console.log("voices.json not found, using default voice map");
+        return defaultVoiceMap;
+    }
 }
 
 function getStatisticsFilePath() {
