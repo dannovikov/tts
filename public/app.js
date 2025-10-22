@@ -19,7 +19,8 @@ function setupPersistentConnection(username) {
             return;
         }
 
-        ws = new WebSocket(`ws://${location.host}/ws?streamer=${username}`);
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        ws = new WebSocket(`${protocol}//${location.host}/ws?streamer=${username}`);
 
         ws.onopen = function() {
             startPing();
